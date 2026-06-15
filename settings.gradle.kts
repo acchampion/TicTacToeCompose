@@ -1,0 +1,42 @@
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
+        }
+    }
+}
+
+rootProject.name = "TicTacToeCompose"
+include(":app")
+
+// Enable Gradle's build cache so that subsequent builds are faster.
+// Cached information is removed after one week. If you need to delete the cached data,
+// go to your home directory, the ".gradle" subdirectory, and delete the directory
+// "caches". (Example: 'rm -rf ~/.gradle/caches' on Macs and Linux systems)
+// Source: CircleCI,
+//   https://circleci.com/blog/turbocharging-your-android-gradle-builds-using-build-cache/
+buildCache {
+    local {
+        isEnabled = true
+        directory = File(rootDir, "build-cache")
+    }
+}
