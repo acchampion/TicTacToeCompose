@@ -9,10 +9,10 @@ espressoCore = "3.7.0"
 leakcanaryAndroid = "2.14"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
-composeBom = "2026.05.01"
+composeBom = "2026.06.00"
 materialThree = "1.4.0"
 constraintlayout = "2.2.1"
-lifecycle = "2.10.0"
+lifecycle = "2.11.0"
 preferences = "1.2.1"
 datastore = "1.2.1"
 room = "2.8.4"
@@ -33,6 +33,7 @@ workRuntimeKtx = "2.11.2"
 mapboxSdk = "11.25.0"
 cronet = "143.7445.0"
 accompanist = "0.37.3"
+splash = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -87,6 +88,7 @@ com-mapbox-maps-android-ndk27 = { group = "com.mapbox.maps", name = "android-ndk
 com-mapbox-extension-maps-compose-ndk27 = { group = "com.mapbox.extension", name = "maps-compose-ndk27", version.ref = "mapboxSdk" }
 org-chromium-net-cronet-embedded = { group = "org.chromium.net", name = "cronet-embedded", version.ref = "cronet" }
 com-google-accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
+androidx-core-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splash" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

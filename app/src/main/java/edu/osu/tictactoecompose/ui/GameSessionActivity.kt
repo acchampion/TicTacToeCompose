@@ -140,10 +140,6 @@ fun GameScreen(
                 WinGameDialog(
                     onPlayAgain = {
                         viewModel.resetBoard()
-                        //viewModel.savePlayerScores()
-                        //activity?.finish()
-                        //val intent = Intent(activity, GameSessionActivity::class.java)
-                        //activity?.startActivity(intent)
                     },
                     viewModel,
                     gameUiState = gameUiState
@@ -154,9 +150,6 @@ fun GameScreen(
                 DrawGameDialog(
                     onPlayAgain = {
                         viewModel.resetBoard()
-//                        activity?.finish()
-//                        val intent = Intent(activity, GameSessionActivity::class.java)
-//                        activity?.startActivity(intent)
                     },
                     viewModel,
                     gameUiState = gameUiState

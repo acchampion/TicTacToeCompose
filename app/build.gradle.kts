@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.material.icons.core)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.core.core.splashscreen)
 
     // ViewModels, LiveData, and dependencies
     implementation(libs.androidx.lifecycle.runtime)

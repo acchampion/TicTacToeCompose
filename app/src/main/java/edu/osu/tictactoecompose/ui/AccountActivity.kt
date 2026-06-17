@@ -46,7 +46,7 @@ import java.security.NoSuchAlgorithmException
 
 class AccountActivity : ComponentActivity() {
     private val userAccountViewModel: UserAccountViewModel by viewModels {
-        UserAccountViewModelFactory((application as TicTacToeApplication).repository)
+        UserAccountViewModelFactory((application as TicTacToeApplication).repository, application)
     }
 
     @OptIn(ExperimentalMaterial3Api::class)

@@ -1,8 +1,13 @@
 package edu.osu.tictactoecompose.ui
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
+import android.view.View
+import android.view.animation.AnticipateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
@@ -17,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -25,23 +31,23 @@ import androidx.compose.material3.OutlinedSecureTextField
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.splashscreen.SplashScreenViewProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.wiley.fordummies.androidsdk.tictactoe.model.Settings
 import edu.osu.tictactoecompose.R
 import edu.osu.tictactoecompose.TicTacToeApplication
 import edu.osu.tictactoecompose.model.UserAccount
 import edu.osu.tictactoecompose.model.viewmodel.UserAccountViewModel
 import edu.osu.tictactoecompose.model.viewmodel.UserAccountViewModelFactory
 import edu.osu.tictactoecompose.ui.theme.TicTacToeComposeTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
@@ -51,13 +57,38 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 class LoginActivity : ComponentActivity() {
     private val userAccountViewModel: UserAccountViewModel by viewModels {
-        UserAccountViewModelFactory((application as TicTacToeApplication).repository)
+        UserAccountViewModelFactory((application as TicTacToeApplication).repository, application)
     }
 
     private var userAccountList = CopyOnWriteArrayList<UserAccount>()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            installSplashScreen().setOnExitAnimationListener { splashScreenView: SplashScreenViewProvider ->
+                val iconView = splashScreenView.iconView
+                if (iconView != null) {
+                    val slideUp = ObjectAnimator.ofFloat(
+                        splashScreenView, View.TRANSLATION_Y.toString(),
+                        0f,
+                        splashScreenView.iconView.height
+                            .toFloat()
+                    )
+                    slideUp.interpolator = AnticipateInterpolator()
+                    slideUp.duration = 200L
+
+                    // Call SplashScreenView.remove at the end of your custom animation.
+                    slideUp.addListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator) {
+                            splashScreenView.remove()
+                        }
+                    })
+
+                    // Run your animation.
+                    slideUp.start()
+                }
+            }
+        }
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -66,7 +97,11 @@ class LoginActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(1f)
                 )
                 { innerPadding ->
-                    LoginScreen(innerPadding, userAccountViewModel)
+                    LoginScreen(
+                        innerPadding,
+                        userAccountViewModel.uiState,
+                        userAccountViewModel
+                    )
                 }
             }
         }
@@ -76,6 +111,8 @@ class LoginActivity : ComponentActivity() {
         ) { newUserAccountList ->
             Timber.tag(localClassName)
                 .i("List of user accounts changed: ${newUserAccountList.size} accounts")
+            Timber.tag(localClassName)
+                .i("User accounts: ${newUserAccountList}")
             userAccountList.clear()
             userAccountList.addAll(newUserAccountList)
         }
@@ -184,109 +221,130 @@ fun LoginScreen(
 @Composable
 fun LoginScreen(
     innerPadding: PaddingValues,
+    uiState: UserAccountUiState,
     accountViewModel: UserAccountViewModel = viewModel()
 ) {
-    val context = LocalActivity.current
+    val activity = LocalActivity.current
+    val scope = rememberCoroutineScope()
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth(1f)
-            .padding(innerPadding),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
-    ) {
+    when (uiState) {
+        UserAccountUiState.SignedOut -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .padding(innerPadding),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
 
-        Text(
-            text = stringResource(R.string.login_title),
-            style = MaterialTheme.typography.displaySmall,
-            textAlign = TextAlign.Center
-        )
+                Text(
+                    text = stringResource(R.string.login_title),
+                    style = MaterialTheme.typography.displaySmall,
+                    textAlign = TextAlign.Center
+                )
 
-        OutlinedTextField(
-            state = accountViewModel.enteredUsernameState,
-            modifier = Modifier.fillMaxWidth(1f),
-            lineLimits = TextFieldLineLimits.SingleLine,
-            label = { Text("Username") }
-        )
+                OutlinedTextField(
+                    state = accountViewModel.enteredUsernameState,
+                    modifier = Modifier.fillMaxWidth(1f),
+                    lineLimits = TextFieldLineLimits.SingleLine,
+                    label = { Text("Username") }
+                )
 
-        OutlinedSecureTextField(
-            state = accountViewModel.enteredPasswordState,
-            modifier = Modifier.fillMaxWidth(1f),
-            label = { Text("Password") },
-        )
+                OutlinedSecureTextField(
+                    state = accountViewModel.enteredPasswordState,
+                    modifier = Modifier.fillMaxWidth(1f),
+                    label = { Text("Password") },
+                )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(0.98f)
-                .padding(innerPadding),
-            Arrangement.spacedBy(20.dp)
-        ) {
-            Button(
-                onClick = {
-                    Timber.tag("LoginActivity: LoginScreen()").d("Logging in...")
-
-                    val enteredUsername = accountViewModel.enteredUsernameState.text.toString()
-                    val enteredPassword = accountViewModel.enteredPasswordState.text.toString()
-
-                    try {
-                        val digest = MessageDigest.getInstance("SHA-256")
-                        val hashPassBytes =
-                            digest.digest(enteredPassword.toByteArray(StandardCharsets.UTF_8))
-                        val hashPassStr = hashPassBytes.toHexString()
-
-                        val userAccount = UserAccount(enteredUsername, hashPassStr)
-                        if (accountViewModel.containsUserAccount(userAccount)) {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                (context?.application as TicTacToeApplication).dataStore.putString(
-                                    Settings.Keys.OPT_NAME, enteredUsername
-                                )
-                                Timber.tag("LoginActivity: LoginScreen: Coroutine")
-                                    .d("Wrote username successfully to DataStore")
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(0.98f)
+                        .padding(innerPadding),
+                    Arrangement.spacedBy(20.dp)
+                ) {
+                    Button(
+                        onClick = {
+                            Timber.tag("LoginActivity: LoginScreen()").d("Logging in...")
+                            accountViewModel.uiState = accountViewModel.checkLogin()
+                            if (accountViewModel.uiState == UserAccountUiState.SignedIn) {
+                                val intent = Intent(activity, GameOptionsActivity::class.java)
+                                activity?.startActivity(intent)
+                            } else {
+                                // UserAccountUiState is Error, so show LoginErrorScreen
+                                Timber.tag("LoginScreen").e("Invalid login")
+                                // Toast.makeText(activity, "Invalid login, please try again", Toast.LENGTH_SHORT).show()
                             }
-                            Timber.tag("LoginActivity: LoginScreen")
-                                .d("Starting GameOptionsActivity")
-                            val intent = Intent(context, GameOptionsActivity::class.java)
-                            context?.startActivity(intent)
-                            context?.finish()
-                        } else {
-                            Timber.tag("LoginActivity: LoginScreen").e("Login error")
-                            Toast.makeText(context, "Login error, please try again", Toast.LENGTH_SHORT).show()
+                        },
+                        content = {
+                            Text(
+                                text = stringResource(R.string.login).uppercase()
+                            )
                         }
-                    } catch (e: NoSuchAlgorithmException) {
-                        Timber.tag("LoginActivity: LoginScreen").e("No SHA-256 algorithm")
-                        e.printStackTrace()
-                    }
-                },
-                content = {
-                    Text(
-                        text = stringResource(R.string.login).uppercase()
+                    )
+                    OutlinedButton(
+                        onClick = {
+                            activity?.finish()
+                            Timber.tag("LoginActivity: LoginScreen()").d("Finishing activity")
+                        },
+                        content = {
+                            Text(
+                                text = stringResource(R.string.exit).uppercase()
+                            )
+                        }
+                    )
+                    OutlinedButton(
+                        onClick = {
+                            Timber.tag("LoginActivity: LoginScreen").d("Starting AccountActivity")
+                            val intent = Intent(activity, AccountActivity::class.java)
+                            activity?.startActivity(intent)
+                        },
+                        content = {
+                            Text(
+                                text = stringResource(R.string.new_user).uppercase()
+                            )
+                        }
                     )
                 }
-            )
-            OutlinedButton(
-                onClick = {
-                    context?.finish()
-                    Timber.tag("LoginActivity: LoginScreen()").d("Finishing activity")
+            }
+        }
+
+        UserAccountUiState.Error -> {
+            LoginErrorScreen(
+                onDismissRequest = {
+                    accountViewModel.uiState = UserAccountUiState.SignedOut
                 },
-                content = {
-                    Text(
-                        text = stringResource(R.string.exit).uppercase()
-                    )
-                }
-            )
-            OutlinedButton(
-                onClick = {
-                    Timber.tag("LoginActivity: LoginScreen").d("Starting AccountActivity")
-                    val intent = Intent(context, AccountActivity::class.java)
-                    context?.startActivity(intent)
-                },
-                content = {
-                    Text(
-                        text = stringResource(R.string.new_user).uppercase()
-                    )
-                }
+                accountViewModel
             )
         }
+
+        UserAccountUiState.SignedIn -> {
+            val intent = Intent(activity, GameOptionsActivity::class.java)
+            activity?.startActivity(intent)
+            activity?.finish()
+        }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LoginErrorScreen(
+    onDismissRequest: () -> Unit,
+    viewModel: UserAccountViewModel
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = { Text("Login Error") },
+        text = { Text("An error occurred during login. Please try again.") },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    Timber.tag("LoginErrorScreen").i("Clicked OK button")
+                    onDismissRequest()
+                }
+            ) {
+                Text("OK")
+            }
+        }
+    )
 }
 
 @Preview(apiLevel = 35)
