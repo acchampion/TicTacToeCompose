@@ -17,7 +17,7 @@ import edu.osu.tictactoecompose.TicTacToeApplication
 import edu.osu.tictactoecompose.model.SettingsDataStore
 import edu.osu.tictactoecompose.model.UserAccount
 import edu.osu.tictactoecompose.model.UserAccountRepository
-import edu.osu.tictactoecompose.ui.UserAccountUiState
+import edu.osu.tictactoecompose.uistate.UserAccountUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

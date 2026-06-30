@@ -1,4 +1,4 @@
-package edu.osu.tictactoecompose.ui
+package edu.osu.tictactoecompose.uistate
 
 import android.os.Parcelable
 import edu.osu.tictactoecompose.GameGrid

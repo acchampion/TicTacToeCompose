@@ -16,7 +16,7 @@ import edu.osu.tictactoecompose.R
 import edu.osu.tictactoecompose.TicTacToeApplication
 import edu.osu.tictactoecompose.api.FlickrApi
 import edu.osu.tictactoecompose.api.FlickrResponse
-import edu.osu.tictactoecompose.model.PhotoGalleryUiState
+import edu.osu.tictactoecompose.uistate.PhotoGalleryUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

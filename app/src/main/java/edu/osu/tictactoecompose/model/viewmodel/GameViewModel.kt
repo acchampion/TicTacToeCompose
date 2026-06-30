@@ -11,9 +11,9 @@ import edu.osu.tictactoecompose.SYMBOL
 import edu.osu.tictactoecompose.Square
 import edu.osu.tictactoecompose.TicTacToeApplication
 import edu.osu.tictactoecompose.model.SettingsDataStore
-import edu.osu.tictactoecompose.ui.GameUiState
-import edu.osu.tictactoecompose.ui.PLAYER
-import edu.osu.tictactoecompose.ui.STATE
+import edu.osu.tictactoecompose.uistate.GameUiState
+import edu.osu.tictactoecompose.uistate.PLAYER
+import edu.osu.tictactoecompose.uistate.STATE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,4 +1,6 @@
-package edu.osu.tictactoecompose.model
+package edu.osu.tictactoecompose.uistate
+
+import edu.osu.tictactoecompose.model.GalleryItem
 
 sealed interface PhotoGalleryUiState {
     data class Success(val photos: List<GalleryItem>) : PhotoGalleryUiState

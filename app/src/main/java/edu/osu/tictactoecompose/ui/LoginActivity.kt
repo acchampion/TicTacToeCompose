@@ -45,6 +45,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.osu.tictactoecompose.R
 import edu.osu.tictactoecompose.TicTacToeApplication
 import edu.osu.tictactoecompose.model.UserAccount
+import edu.osu.tictactoecompose.uistate.UserAccountUiState
 import edu.osu.tictactoecompose.model.viewmodel.UserAccountViewModel
 import edu.osu.tictactoecompose.model.viewmodel.UserAccountViewModelFactory
 import edu.osu.tictactoecompose.ui.theme.TicTacToeComposeTheme

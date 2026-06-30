@@ -1,4 +1,4 @@
-package edu.osu.tictactoecompose.ui
+package edu.osu.tictactoecompose.uistate
 
 sealed class UserAccountUiState {
     object SignedOut: UserAccountUiState()

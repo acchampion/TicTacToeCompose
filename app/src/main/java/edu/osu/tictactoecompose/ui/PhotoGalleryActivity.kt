@@ -36,9 +36,9 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import edu.osu.tictactoecompose.R
 import edu.osu.tictactoecompose.model.GalleryItem
-import edu.osu.tictactoecompose.model.PhotoGalleryUiState
 import edu.osu.tictactoecompose.model.viewmodel.PhotoGalleryViewModel
 import edu.osu.tictactoecompose.ui.theme.TicTacToeComposeTheme
+import edu.osu.tictactoecompose.uistate.PhotoGalleryUiState
 
 class PhotoGalleryActivity : ComponentActivity() {
     private val photoGalleryViewModel: PhotoGalleryViewModel by viewModels {

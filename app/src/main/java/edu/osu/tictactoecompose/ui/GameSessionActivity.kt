@@ -52,6 +52,8 @@ import edu.osu.tictactoecompose.GameGrid
 import edu.osu.tictactoecompose.R
 import edu.osu.tictactoecompose.SYMBOL
 import edu.osu.tictactoecompose.Square
+import edu.osu.tictactoecompose.uistate.GameUiState
+import edu.osu.tictactoecompose.uistate.STATE
 import edu.osu.tictactoecompose.model.viewmodel.GameViewModel
 import edu.osu.tictactoecompose.ui.theme.TicTacToeComposeTheme
 import kotlinx.coroutines.delay
